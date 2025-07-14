@@ -113,64 +113,48 @@
         .option-row {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 10px;
             margin: 15px 0;
             flex-wrap: wrap;
         }
 
         .option-group {
             display: flex;
-            gap: 10px;
+            gap: 5px;
             align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
-        .binary-option,
-        .quaternary-option {
-            padding: 8px 16px;
+        .coding-option {
+            padding: 8px 12px;
             border: 2px solid #ddd;
-            border-radius: 20px;
+            border-radius: 15px;
             cursor: pointer;
             transition: all 0.2s;
             background: white;
-            font-size: 0.9em;
+            font-size: 0.8em;
+            min-width: 60px;
+            text-align: center;
         }
 
-        .binary-option:hover,
-        .quaternary-option:hover {
+        .coding-option:hover {
             background: #f0f0f0;
         }
 
-        .binary-option.selected {
+        .coding-option.selected {
             background: #667eea;
             color: white;
             border-color: #667eea;
         }
 
-        .quaternary-option.selected {
-            background: #764ba2;
-            color: white;
-            border-color: #764ba2;
-        }
-
-        .binary-option.correct {
+        .coding-option.correct {
             background: #4CAF50;
             color: white;
             border-color: #4CAF50;
         }
 
-        .quaternary-option.correct {
-            background: #4CAF50;
-            color: white;
-            border-color: #4CAF50;
-        }
-
-        .binary-option.incorrect {
-            background: #f44336;
-            color: white;
-            border-color: #f44336;
-        }
-
-        .quaternary-option.incorrect {
+        .coding-option.incorrect {
             background: #f44336;
             color: white;
             border-color: #f44336;
@@ -267,6 +251,12 @@
                 flex-direction: column;
                 align-items: center;
             }
+
+            .coding-option {
+                font-size: 0.7em;
+                padding: 6px 8px;
+                min-width: 50px;
+            }
         }
     </style>
 </head>
@@ -276,8 +266,8 @@
         <div class="start-screen">
             <h1 class="title">Truco Coding Practice</h1>
             <p style="margin: 20px 0; color: #666; line-height: 1.6;">
-                Practice the truco coding system! You'll be shown 10 hands and must encode them using the binary +
-                quaternary system.
+                Practice the truco coding system! You'll be shown 10 hands and must encode them using the 8+1 ordered
+                values system.
                 <br><br>
             </p>
             <button class="start-btn" onclick="startGame()">Start Practice</button>
@@ -292,77 +282,57 @@
             <div class="coding-options">
                 <div class="option-row">
                     <div class="option-group">
-                        <div class="binary-option" data-type="envido-binary" data-value="upper" data-index="0">Upper
-                        </div>
-                        <div class="binary-option" data-type="envido-binary" data-value="lower" data-index="1">Lower
-                        </div>
-                        <div class="quaternary-option" data-type="envido-quaternary" data-value="0" data-index="0">Q1
-                        </div>
-                        <div class="quaternary-option" data-type="envido-quaternary" data-value="1" data-index="1">Q2
-                        </div>
-                        <div class="quaternary-option" data-type="envido-quaternary" data-value="2" data-index="2">Q3
-                        </div>
-                        <div class="quaternary-option" data-type="envido-quaternary" data-value="3" data-index="3">Q4
-                        </div>
-                        <div class="quaternary-option" data-type="envido-quaternary" data-value="4" data-index="4">
-                            Null</div>
+                        <div class="coding-option" data-type="envido" data-value="0">1</div>
+                        <div class="coding-option" data-type="envido" data-value="1">2</div>
+                        <div class="coding-option" data-type="envido" data-value="2">3</div>
+                        <div class="coding-option" data-type="envido" data-value="3">4</div>
+                        <div class="coding-option" data-type="envido" data-value="4">5</div>
+                        <div class="coding-option" data-type="envido" data-value="5">6</div>
+                        <div class="coding-option" data-type="envido" data-value="6">7</div>
+                        <div class="coding-option" data-type="envido" data-value="7">8</div>
+                        <div class="coding-option" data-type="envido" data-value="8">Null</div>
                     </div>
                 </div>
 
                 <div class="option-row">
                     <div class="option-group">
-                        <div class="binary-option" data-type="truco1-binary" data-value="upper" data-index="0">Upper
-                        </div>
-                        <div class="binary-option" data-type="truco1-binary" data-value="lower" data-index="1">Lower
-                        </div>
-                        <div class="quaternary-option" data-type="truco1-quaternary" data-value="0" data-index="0">Q1
-                        </div>
-                        <div class="quaternary-option" data-type="truco1-quaternary" data-value="1" data-index="1">Q2
-                        </div>
-                        <div class="quaternary-option" data-type="truco1-quaternary" data-value="2" data-index="2">Q3
-                        </div>
-                        <div class="quaternary-option" data-type="truco1-quaternary" data-value="3" data-index="3">Q4
-                        </div>
-                        <div class="quaternary-option" data-type="truco1-quaternary" data-value="4" data-index="4">
-                            Null</div>
+                        <div class="coding-option" data-type="truco1" data-value="0">1</div>
+                        <div class="coding-option" data-type="truco1" data-value="1">2</div>
+                        <div class="coding-option" data-type="truco1" data-value="2">3</div>
+                        <div class="coding-option" data-type="truco1" data-value="3">4</div>
+                        <div class="coding-option" data-type="truco1" data-value="4">5</div>
+                        <div class="coding-option" data-type="truco1" data-value="5">6</div>
+                        <div class="coding-option" data-type="truco1" data-value="6">7</div>
+                        <div class="coding-option" data-type="truco1" data-value="7">8</div>
+                        <div class="coding-option" data-type="truco1" data-value="8">Null</div>
                     </div>
                 </div>
 
                 <div class="option-row">
                     <div class="option-group">
-                        <div class="binary-option" data-type="truco2-binary" data-value="upper" data-index="0">Upper
-                        </div>
-                        <div class="binary-option" data-type="truco2-binary" data-value="lower" data-index="1">Lower
-                        </div>
-                        <div class="quaternary-option" data-type="truco2-quaternary" data-value="0" data-index="0">Q1
-                        </div>
-                        <div class="quaternary-option" data-type="truco2-quaternary" data-value="1" data-index="1">Q2
-                        </div>
-                        <div class="quaternary-option" data-type="truco2-quaternary" data-value="2" data-index="2">Q3
-                        </div>
-                        <div class="quaternary-option" data-type="truco2-quaternary" data-value="3" data-index="3">Q4
-                        </div>
-                        <div class="quaternary-option" data-type="truco2-quaternary" data-value="4" data-index="4">
-                            Null</div>
+                        <div class="coding-option" data-type="truco2" data-value="0">1</div>
+                        <div class="coding-option" data-type="truco2" data-value="1">2</div>
+                        <div class="coding-option" data-type="truco2" data-value="2">3</div>
+                        <div class="coding-option" data-type="truco2" data-value="3">4</div>
+                        <div class="coding-option" data-type="truco2" data-value="4">5</div>
+                        <div class="coding-option" data-type="truco2" data-value="5">6</div>
+                        <div class="coding-option" data-type="truco2" data-value="6">7</div>
+                        <div class="coding-option" data-type="truco2" data-value="7">8</div>
+                        <div class="coding-option" data-type="truco2" data-value="8">Null</div>
                     </div>
                 </div>
 
                 <div class="option-row">
                     <div class="option-group">
-                        <div class="binary-option" data-type="truco3-binary" data-value="upper" data-index="0">Upper
-                        </div>
-                        <div class="binary-option" data-type="truco3-binary" data-value="lower" data-index="1">Lower
-                        </div>
-                        <div class="quaternary-option" data-type="truco3-quaternary" data-value="0" data-index="0">Q1
-                        </div>
-                        <div class="quaternary-option" data-type="truco3-quaternary" data-value="1" data-index="1">Q2
-                        </div>
-                        <div class="quaternary-option" data-type="truco3-quaternary" data-value="2" data-index="2">Q3
-                        </div>
-                        <div class="quaternary-option" data-type="truco3-quaternary" data-value="3" data-index="3">Q4
-                        </div>
-                        <div class="quaternary-option" data-type="truco3-quaternary" data-value="4" data-index="4">
-                            Null</div>
+                        <div class="coding-option" data-type="truco3" data-value="0">1</div>
+                        <div class="coding-option" data-type="truco3" data-value="1">2</div>
+                        <div class="coding-option" data-type="truco3" data-value="2">3</div>
+                        <div class="coding-option" data-type="truco3" data-value="3">4</div>
+                        <div class="coding-option" data-type="truco3" data-value="4">5</div>
+                        <div class="coding-option" data-type="truco3" data-value="5">6</div>
+                        <div class="coding-option" data-type="truco3" data-value="6">7</div>
+                        <div class="coding-option" data-type="truco3" data-value="7">8</div>
+                        <div class="coding-option" data-type="truco3" data-value="8">Null</div>
                     </div>
                 </div>
             </div>
@@ -379,30 +349,17 @@
 
     <script>
         // Game configuration
-        const BINARY_SETS = [
-            ['Malo', 'Bueno'],
-            ['Bajo', 'Alto'],
-            ['Pequeño', 'Grande'],
-            ['Débil', 'Fuerte'],
-            ['No', 'Sí'],
-            ['Paspado', 'Sano'],
-            ['Cachi', 'Cheto'],
-            ['Falso', 'Verdadero'],
-            ['Muerto', 'Vivo'],
-            ['Garrón', 'Aguante'],
-        ];
-
-        const QUATERNARY_SETS = [
-            ['Ikki', 'Shiru', 'Seiya', 'Shun', 'Athena'],
-            ['Platino', 'Oro', 'Plata', 'Bronce', 'Diamante'],
-            ['Shaka', 'Saga', 'Aioros', 'Aioria', 'Shura'],
-            ['Verde', 'Violeta', 'Azul', 'Rojo', 'Amarillo'],
-            ['Irigoyen', 'Perón', 'Frondizi', 'Ménem', 'Galtieri'],
-            ['FIT', 'UniónPorLaPatria', 'Pro', 'LLA', 'Frepaso'],
-            ['San Martín', 'Belgrano', 'Sarmiento', 'Roca', 'Pellegrini'],
-            ['McDonalds', 'Burger', 'Mostaza', 'Pumper Nic', 'Wendys'],
-            ['Papas fritas', 'Salmón', 'Asado', 'Ensalada', 'Hamburguesa'],
-            ['Rosamonte Selección', 'Playadito', 'Nobleza Gaucha', 'Taragüí', 'Adelgamate'],
+        const CATEGORY_SETS = [
+            ['San Martín', 'Belgrano', 'Sarmiento', 'Roca', 'Centenario', 'Recoleta', 'Soldati', 'Lugano', 'Palermo'],
+            ['Spinetta', 'Charly', 'Fito', 'Cerati', 'Invisible', 'Serú', 'Cantilo', 'Soda', 'Piojos'],
+            ['Rosamonte Selección', 'Playadito', 'Nobleza Gaucha', 'Taragüí', 'Mate', 'Café', 'Té', 'Agua', 'Coca Cola'],
+            ['Verde', 'Violeta', 'Azul', 'Rojo', 'Pasto', 'Amatista', 'Cielo', 'Sangre', 'Amarillo, Naranja'],
+            ['Lituania', 'Moldavia', 'España', 'Italia', 'Vilna', 'Chisinau', 'Madrid', 'Roma', 'Portugal, Lisboa'],
+            ['Ikki', 'Shiru', 'Seiya', 'Shun', 'Shaka', 'Saga', 'Aioros', 'Aioria', 'Hyoga, Mu'],
+            ['Irigoyen', 'Perón', 'Frondizi', 'Ménem', 'FIT', 'UniónPorLaPatria', 'Pro', 'LLA', 'Frepaso, Biondini, Néstor'],
+            ['Go', 'Python', 'Typescript', 'Javascript', 'C++', 'Django', 'React', 'Angular', 'Rust'],
+            ['Mayo', 'Octubre', 'Zapata', 'Habanna', 'Argentina', 'Rusia', 'México', 'Cuba'],
+            ['Mutas', 'Drones', 'Probes', 'SCVs', 'Carriers', 'Zergs', 'Protoss', 'Terrans', 'Xel Naga']
         ];
 
         // Game state
@@ -414,17 +371,12 @@
             roundTimes: [],
             correctAnswers: 0,
             currentHand: null,
-            currentBinarySet: null,
-            currentQuaternarySet: null,
+            currentCategorySet: null,
             selectedOptions: {
-                'envido-binary': null,
-                'envido-quaternary': null,
-                'truco1-binary': null,
-                'truco1-quaternary': null,
-                'truco2-binary': null,
-                'truco2-quaternary': null,
-                'truco3-binary': null,
-                'truco3-quaternary': null
+                'envido': null,
+                'truco1': null,
+                'truco2': null,
+                'truco3': null
             }
         };
 
@@ -483,15 +435,14 @@
             gameState.correctAnswers = 0;
             gameState.startTime = Date.now();
 
-            // Select initial random binary and quaternary sets
-            gameState.currentBinarySet = BINARY_SETS[Math.floor(Math.random() * BINARY_SETS.length)];
-            gameState.currentQuaternarySet = QUATERNARY_SETS[Math.floor(Math.random() * QUATERNARY_SETS.length)];
+            // Select initial random category set
+            gameState.currentCategorySet = CATEGORY_SETS[Math.floor(Math.random() * CATEGORY_SETS.length)];
 
             document.querySelector('.start-screen').style.display = 'none';
             document.querySelector('.game-screen').style.display = 'block';
             document.querySelector('.summary-screen').style.display = 'none';
 
-            // Update labels with initial sets
+            // Update labels with initial set
             updateLabels();
 
             startNewRound();
@@ -507,11 +458,10 @@
             // Generate new hand
             gameState.currentHand = generateRandomHand();
 
-            // Select random binary and quaternary sets
-            gameState.currentBinarySet = BINARY_SETS[Math.floor(Math.random() * BINARY_SETS.length)];
-            gameState.currentQuaternarySet = QUATERNARY_SETS[Math.floor(Math.random() * QUATERNARY_SETS.length)];
+            // Select random category set
+            gameState.currentCategorySet = CATEGORY_SETS[Math.floor(Math.random() * CATEGORY_SETS.length)];
 
-            // Update labels with random sets
+            // Update labels with random set
             updateLabels();
 
             // Update display
@@ -549,24 +499,13 @@
         }
 
         function updateLabels() {
-            // Update binary labels
-            document.querySelectorAll('.binary-option').forEach(option => {
-                const index = parseInt(option.dataset.index);
-                if (index === 0) {
-                    option.textContent = gameState.currentBinarySet[0];
-                } else if (index === 1) {
-                    option.textContent = gameState.currentBinarySet[1];
-                }
-            });
-
-            // Update quaternary labels
-            document.querySelectorAll('.quaternary-option').forEach(option => {
-                const index = option.dataset.index;
-                if (index === 'null') {
+            // Update all coding option labels with current category set
+            document.querySelectorAll('.coding-option').forEach(option => {
+                const value = parseInt(option.dataset.value);
+                if (value === 8) {
                     option.textContent = 'Null';
                 } else {
-                    const quaternaryIndex = parseInt(index);
-                    option.textContent = gameState.currentQuaternarySet[quaternaryIndex];
+                    option.textContent = gameState.currentCategorySet[value];
                 }
             });
         }
@@ -591,24 +530,20 @@
 
         function clearSelections() {
             gameState.selectedOptions = {
-                'envido-binary': null,
-                'envido-quaternary': null,
-                'truco1-binary': null,
-                'truco1-quaternary': null,
-                'truco2-binary': null,
-                'truco2-quaternary': null,
-                'truco3-binary': null,
-                'truco3-quaternary': null
+                'envido': null,
+                'truco1': null,
+                'truco2': null,
+                'truco3': null
             };
 
-            document.querySelectorAll('.binary-option, .quaternary-option').forEach(option => {
+            document.querySelectorAll('.coding-option').forEach(option => {
                 option.classList.remove('selected', 'correct', 'incorrect');
             });
         }
 
         // Event listeners for option selection
         document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.binary-option, .quaternary-option').forEach(option => {
+            document.querySelectorAll('.coding-option').forEach(option => {
                 option.addEventListener('click', function () {
                     const type = this.dataset.type;
                     const value = this.dataset.value;
@@ -663,37 +598,19 @@
             // Encode envido
             if (IMPORTANT_ENVIDO_SCORES.includes(envidoScore)) {
                 const scoreIndex = IMPORTANT_ENVIDO_SCORES.indexOf(envidoScore);
-                const upperLower = scoreIndex < 4 ? 'upper' : 'lower';
-                const quaternaryIndex = scoreIndex % 4;
-
-                code.envido = {
-                    binary: upperLower,
-                    quaternary: quaternaryIndex.toString()
-                };
+                code.envido = scoreIndex.toString();
             } else {
-                code.envido = {
-                    binary: '*', // Any binary is valid for non-important scores
-                    quaternary: '4'
-                };
+                code.envido = '8'; // Null option for non-important scores
             }
 
             // Encode truco cards
             if (trucoCards.length === 0) {
                 // No important cards - need exactly 1 truco code with null
-                code.truco.push({
-                    binary: '*', // Any binary is valid
-                    quaternary: '4' // Null option
-                });
+                code.truco.push('8'); // Null option
             } else {
                 trucoCards.forEach((card, index) => {
                     if (index < 3) {
-                        const upperLower = card.trucoRank < 4 ? 'upper' : 'lower';
-                        const quaternaryIndex = card.trucoRank % 4;
-
-                        code.truco.push({
-                            binary: upperLower,
-                            quaternary: quaternaryIndex.toString()
-                        });
+                        code.truco.push(card.trucoRank.toString());
                     }
                 });
             }
@@ -707,19 +624,17 @@
             let feedback = '';
 
             // Check envido
-            if ((gameState.selectedOptions['envido-binary'] !== correctCode.envido.binary && correctCode.envido.binary !== '*') ||
-                gameState.selectedOptions['envido-quaternary'] !== correctCode.envido.quaternary) {
+            if (gameState.selectedOptions['envido'] !== correctCode.envido) {
                 isCorrect = false;
-                feedback += `Envido incorrect (was ${gameState.selectedOptions['envido-binary']}-${gameState.selectedOptions['envido-quaternary']}, should be ${correctCode.envido.binary}-${correctCode.envido.quaternary}) `;
+                feedback += `Envido incorrect (was ${gameState.selectedOptions['envido']}, should be ${correctCode.envido}) `;
             }
 
             // Check truco cards
             const selectedTrucoCards = [];
             for (let i = 1; i <= 3; i++) {
-                const binary = gameState.selectedOptions[`truco${i}-binary`];
-                const quaternary = gameState.selectedOptions[`truco${i}-quaternary`];
-                if (binary && quaternary && quaternary !== 'null') {
-                    selectedTrucoCards.push({ binary, quaternary });
+                const value = gameState.selectedOptions[`truco${i}`];
+                if (value && value !== '8') {
+                    selectedTrucoCards.push(value);
                 }
             }
 
@@ -728,8 +643,8 @@
                 feedback += 'Wrong number of truco cards. ';
             } else {
                 // Check if selected cards match (order doesn't matter)
-                const correctCards = correctCode.truco.map(card => `${card.binary}-${card.quaternary}`).sort();
-                const selectedCards = selectedTrucoCards.map(card => `${card.binary}-${card.quaternary}`).sort();
+                const correctCards = correctCode.truco.sort();
+                const selectedCards = selectedTrucoCards.sort();
 
                 if (JSON.stringify(correctCards) !== JSON.stringify(selectedCards)) {
                     isCorrect = false;
@@ -793,28 +708,15 @@
                 // If incorrect, highlight the correct answers and mark incorrect selections
                 // Highlight envido
                 if (correctCode.envido) {
-                    let binaryOption = document.querySelector(`[data-type="envido-binary"][data-value="${correctCode.envido.binary}"]`);
-                    let secondaryBinaryOption = null;
-                    if (!binaryOption) {
-                        binaryOption = document.querySelector(`[data-type="envido-binary"][data-value="0"]`);
-                        secondaryBinaryOption = document.querySelector(`[data-type="envido-binary"][data-value="1"]`);
-                    }
-                    const quaternaryOption = document.querySelector(`[data-type="envido-quaternary"][data-value="${correctCode.envido.quaternary}"]`);
-
-                    if (binaryOption) binaryOption.classList.add('correct');
-                    if (secondaryBinaryOption) secondaryBinaryOption.classList.add('correct');
-                    if (quaternaryOption) quaternaryOption.classList.add('correct');
+                    const envidoOption = document.querySelector(`[data-type="envido"][data-value="${correctCode.envido}"]`);
+                    if (envidoOption) envidoOption.classList.add('correct');
                 }
 
-                // Highlight truco cards - find any matching options regardless of position
-                correctCode.truco.forEach((card) => {
-                    // Find any binary option that matches (any position)
-                    const binaryOptions = document.querySelectorAll(`[data-type^="truco"][data-type$="-binary"][data-value="${card.binary}"]`);
-                    const quaternaryOptions = document.querySelectorAll(`[data-type^="truco"][data-type$="-quaternary"][data-value="${card.quaternary}"]`);
-
-                    // Highlight the first available matching options
-                    if (binaryOptions.length > 0) binaryOptions[0].classList.add('correct');
-                    if (quaternaryOptions.length > 0) quaternaryOptions[0].classList.add('correct');
+                // Highlight truco cards
+                correctCode.truco.forEach((cardValue) => {
+                    // Find any truco option that matches (any position)
+                    const trucoOptions = document.querySelectorAll(`[data-type^="truco"][data-value="${cardValue}"]`);
+                    if (trucoOptions.length > 0) trucoOptions[0].classList.add('correct');
                 });
 
                 // Highlight incorrect selections
