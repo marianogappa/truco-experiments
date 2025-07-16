@@ -51,6 +51,88 @@
             display: none;
         }
 
+        .category-selection {
+            margin: 30px 0;
+            text-align: left;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .category-selection h3 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .category-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .category-option {
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            text-align: left;
+            font-size: 0.9em;
+        }
+
+        .category-option:hover {
+            background: #f0f0f0;
+            border-color: #667eea;
+        }
+
+        .category-option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .category-option .category-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .category-option .category-items {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+
+        .random-category {
+            text-align: center;
+            padding: 15px;
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            margin-bottom: 20px;
+        }
+
+        .random-category:hover {
+            background: #f0f0f0;
+        }
+
+        .random-category.selected {
+            background: #667eea;
+            color: white;
+        }
+
+        .random-category h4 {
+            margin-bottom: 5px;
+        }
+
+        .random-category p {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
         .start-btn,
         .restart-btn {
             background: linear-gradient(45deg, #667eea, #764ba2);
@@ -270,6 +352,19 @@
                 values system.
                 <br><br>
             </p>
+
+            <div class="category-selection">
+                <h3>Select Category Set</h3>
+                <div class="random-category" onclick="selectCategory(-1)">
+                    <h4>🎲 Random Categories</h4>
+                    <p>Each round will use a different random category (original behavior)</p>
+                </div>
+
+                <div class="category-options" id="categoryOptions">
+                    <!-- Category options will be populated by JavaScript -->
+                </div>
+            </div>
+
             <button class="start-btn" onclick="startGame()">Start Practice</button>
         </div>
 
@@ -362,6 +457,19 @@
             ['Mutas', 'Drones', 'Probes', 'SCVs', 'Carriers', 'Zergs', 'Protoss', 'Terrans', 'Xel Naga']
         ];
 
+        const CATEGORY_NAMES = [
+            'Subte Lines',
+            'Argentine Rock',
+            'Yerba Mate & Drinks',
+            'Colors',
+            'European Countries & Cities',
+            'Saint Seiya Characters',
+            'Argentine Presidents',
+            'Programming Languages',
+            'Revolutions & Countries',
+            'StarCraft Units'
+        ];
+
         // Game state
         let gameState = {
             currentRound: 0,
@@ -372,6 +480,7 @@
             correctAnswers: 0,
             currentHand: null,
             currentCategorySet: null,
+            selectedCategoryIndex: -1, // -1 means random, >= 0 means specific category
             timerPaused: false,
             roundElapsedTime: 0, // <-- add this
             selectedOptions: {
@@ -431,14 +540,59 @@
         // Important envido scores (26-33)
         const IMPORTANT_ENVIDO_SCORES = [33, 32, 31, 30, 29, 28, 27, 26];
 
+        function populateCategoryOptions() {
+            const categoryOptions = document.getElementById('categoryOptions');
+            categoryOptions.innerHTML = '';
+
+            CATEGORY_SETS.forEach((categorySet, index) => {
+                const categoryOption = document.createElement('div');
+                categoryOption.className = 'category-option';
+                categoryOption.onclick = () => selectCategory(index);
+
+                const categoryName = document.createElement('div');
+                categoryName.className = 'category-name';
+                categoryName.textContent = CATEGORY_NAMES[index];
+
+                const categoryItems = document.createElement('div');
+                categoryItems.className = 'category-items';
+                categoryItems.textContent = categorySet.slice(0, 4).join(', ') + '...';
+
+                categoryOption.appendChild(categoryName);
+                categoryOption.appendChild(categoryItems);
+                categoryOptions.appendChild(categoryOption);
+            });
+        }
+
+        function selectCategory(categoryIndex) {
+            // Clear all selections
+            document.querySelectorAll('.category-option, .random-category').forEach(option => {
+                option.classList.remove('selected');
+            });
+
+            // Select the clicked option
+            if (categoryIndex === -1) {
+                document.querySelector('.random-category').classList.add('selected');
+            } else {
+                document.querySelectorAll('.category-option')[categoryIndex].classList.add('selected');
+            }
+
+            gameState.selectedCategoryIndex = categoryIndex;
+        }
+
         function startGame() {
             gameState.currentRound = 0;
             gameState.roundTimes = [];
             gameState.correctAnswers = 0;
             gameState.startTime = Date.now();
 
-            // Select initial random category set
-            gameState.currentCategorySet = CATEGORY_SETS[Math.floor(Math.random() * CATEGORY_SETS.length)];
+            // Set initial category based on selection
+            if (gameState.selectedCategoryIndex === -1) {
+                // Random category (will be selected each round)
+                gameState.currentCategorySet = CATEGORY_SETS[Math.floor(Math.random() * CATEGORY_SETS.length)];
+            } else {
+                // Fixed category for all rounds
+                gameState.currentCategorySet = CATEGORY_SETS[gameState.selectedCategoryIndex];
+            }
 
             document.querySelector('.start-screen').style.display = 'none';
             document.querySelector('.game-screen').style.display = 'block';
@@ -481,10 +635,16 @@
             // Generate new hand
             gameState.currentHand = generateRandomHand();
 
-            // Select random category set
-            gameState.currentCategorySet = CATEGORY_SETS[Math.floor(Math.random() * CATEGORY_SETS.length)];
+            // Select category set based on user selection
+            if (gameState.selectedCategoryIndex === -1) {
+                // Random category for each round
+                gameState.currentCategorySet = CATEGORY_SETS[Math.floor(Math.random() * CATEGORY_SETS.length)];
+            } else {
+                // Use the same category for all rounds
+                gameState.currentCategorySet = CATEGORY_SETS[gameState.selectedCategoryIndex];
+            }
 
-            // Update labels with random set
+            // Update labels with selected set
             updateLabels();
 
             // Shuffle the options in each group
@@ -602,6 +762,12 @@
 
         // Event listeners for option selection
         document.addEventListener('DOMContentLoaded', function () {
+            // Populate category options
+            populateCategoryOptions();
+
+            // Set default selection to random
+            selectCategory(-1);
+
             document.querySelectorAll('.coding-option').forEach(option => {
                 option.addEventListener('click', function () {
                     const type = this.dataset.type;
@@ -682,7 +848,7 @@
             setInputsEnabled(false);
             // Pause the timer when Done is clicked
             pauseTimer();
-            
+
             const correctCode = getCorrectCode(gameState.currentHand);
             let isCorrect = true;
             let feedback = '';
