@@ -372,6 +372,8 @@
             correctAnswers: 0,
             currentHand: null,
             currentCategorySet: null,
+            timerPaused: false,
+            roundElapsedTime: 0, // <-- add this
             selectedOptions: {
                 'envido': null,
                 'truco1': null,
@@ -451,6 +453,9 @@
         function startNewRound() {
             gameState.currentRound++;
             gameState.roundStartTime = Date.now();
+            gameState.roundElapsedTime = 0;
+            // Habilitar inputs al iniciar la ronda
+            setInputsEnabled(true);
 
             // Clear previous selections
             clearSelections();
@@ -512,10 +517,17 @@
 
         function startTimer() {
             const timerElement = document.getElementById('timer');
-            const startTime = Date.now();
+            gameState.timerPaused = false;
+            // No local startTime, use gameState.roundStartTime
 
             const updateTimer = () => {
-                const elapsed = Date.now() - startTime;
+                let elapsed;
+                if (gameState.timerPaused) {
+                    elapsed = gameState.roundElapsedTime;
+                } else {
+                    elapsed = Date.now() - gameState.roundStartTime;
+                    gameState.roundElapsedTime = elapsed; // update elapsed time in state
+                }
                 const minutes = Math.floor(elapsed / 60000);
                 const seconds = Math.floor((elapsed % 60000) / 1000);
                 timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
@@ -526,6 +538,20 @@
             };
 
             updateTimer();
+        }
+
+        function pauseTimer() {
+            if (!gameState.timerPaused) {
+                gameState.timerPaused = true;
+                // roundElapsedTime is already up to date from startTimer
+            }
+        }
+
+        function resumeTimer() {
+            if (gameState.timerPaused) {
+                gameState.timerPaused = false;
+                // Adjust roundStartTime so timer resumes correctly (not needed in this flow)
+            }
         }
 
         function clearSelections() {
@@ -539,6 +565,18 @@
             document.querySelectorAll('.coding-option').forEach(option => {
                 option.classList.remove('selected', 'correct', 'incorrect');
             });
+        }
+
+        function setInputsEnabled(enabled) {
+            // Habilita o deshabilita las opciones y el botón Done
+            document.querySelectorAll('.coding-option').forEach(option => {
+                option.style.pointerEvents = enabled ? '' : 'none';
+                option.style.opacity = enabled ? '' : '0.5';
+            });
+            const doneBtn = document.getElementById('doneBtn');
+            if (doneBtn) {
+                doneBtn.disabled = !enabled;
+            }
         }
 
         // Event listeners for option selection
@@ -619,6 +657,11 @@
         }
 
         function checkAnswer() {
+            // Deshabilitar inputs al hacer click en Done
+            setInputsEnabled(false);
+            // Pause the timer when Done is clicked
+            pauseTimer();
+            
             const correctCode = getCorrectCode(gameState.currentHand);
             let isCorrect = true;
             let feedback = '';
