@@ -749,7 +749,7 @@
             };
 
             document.querySelectorAll('.coding-option').forEach(option => {
-                option.classList.remove('selected', 'correct', 'incorrect');
+                option.classList.remove('selected');
             });
         }
 
@@ -790,13 +790,13 @@
             });
 
             // Add window focus/blur event listeners for timer control
-            window.addEventListener('blur', function() {
+            window.addEventListener('blur', function () {
                 if (gameState.currentRound > 0 && gameState.currentRound <= gameState.totalRounds) {
                     pauseTimer();
                 }
             });
 
-            window.addEventListener('focus', function() {
+            window.addEventListener('focus', function () {
                 if (gameState.currentRound > 0 && gameState.currentRound <= gameState.totalRounds && gameState.timerPaused) {
                     resumeTimer();
                 }
@@ -831,9 +831,16 @@
         }
 
         function getTrucoCards(hand) {
-            return hand
+            const trucoCards = hand
                 .filter(card => card.trucoRank < 8)
                 .sort((a, b) => a.trucoRank - b.trucoRank);
+
+            // If lowest rank is 8 or higher, return null
+            if (trucoCards.length === 0 || trucoCards[0].trucoRank >= 8) {
+                return null;
+            }
+
+            return trucoCards;
         }
 
         function getCorrectCode(hand) {
@@ -854,7 +861,7 @@
             }
 
             // Encode truco cards
-            if (trucoCards.length === 0) {
+            if (trucoCards === null) {
                 // No important cards - need exactly 1 truco code with null
                 code.truco.push('8'); // Null option
             } else {
@@ -893,18 +900,10 @@
                 }
             }
 
-            if (selectedTrucoCards.length !== correctCode.truco.length) {
+            // Check if selected cards match (order matters)
+            if (JSON.stringify(correctCode.truco) !== JSON.stringify(selectedTrucoCards)) {
                 isCorrect = false;
-                feedback += 'Wrong number of truco cards. ';
-            } else {
-                // Check if selected cards match (order doesn't matter)
-                const correctCards = correctCode.truco.sort();
-                const selectedCards = selectedTrucoCards.sort();
-
-                if (JSON.stringify(correctCards) !== JSON.stringify(selectedCards)) {
-                    isCorrect = false;
-                    feedback += 'Truco cards incorrect. ';
-                }
+                feedback += 'Truco cards incorrect. ';
             }
 
             // Show feedback
@@ -938,55 +937,36 @@
             // Create feedback element
             const feedback = document.createElement('div');
             feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
-            feedback.textContent = isCorrect ? 'Correct!' : `Incorrect! ${message}`;
+
+            if (isCorrect) {
+                feedback.textContent = 'Correct!';
+            } else {
+                // Show the correct code in the feedback
+                const envidoLabel = correctCode.envido === '8' ? 'Null' : gameState.currentCategorySet[parseInt(correctCode.envido)];
+                const trucoLabels = correctCode.truco.map(value =>
+                    value === '8' ? 'Null' : gameState.currentCategorySet[parseInt(value)]
+                );
+
+                // Get user's selections for comparison
+                const userEnvido = gameState.selectedOptions['envido'] === '8' ? 'Null' : gameState.currentCategorySet[parseInt(gameState.selectedOptions['envido'])];
+                const userTrucoCards = [];
+                for (let i = 1; i <= 3; i++) {
+                    const value = gameState.selectedOptions[`truco${i}`];
+                    if (value && value !== '8') {
+                        userTrucoCards.push(gameState.currentCategorySet[parseInt(value)]);
+                    }
+                }
+                const userTruco = userTrucoCards.length > 0 ? userTrucoCards.join(', ') : 'None selected';
+
+                feedback.innerHTML = `Incorrect! ${message}<br><br><strong>Your code:</strong><br>Envido: ${userEnvido}<br>Truco: ${userTruco}<br><br><strong>Correct code:</strong><br>Envido: ${envidoLabel}<br>Truco: ${trucoLabels.join(', ')}`;
+            }
 
             // Insert feedback before the done button
             const doneBtn = document.getElementById('doneBtn');
             doneBtn.parentNode.insertBefore(feedback, doneBtn);
-
-            // Show correct answers by highlighting options
-            highlightCorrectAnswers(isCorrect, correctCode);
         }
 
-        function highlightCorrectAnswers(isCorrect, correctCode) {
-            if (isCorrect) {
-                // If correct, highlight all selected options in green
-                Object.entries(gameState.selectedOptions).forEach(([type, value]) => {
-                    if (value) {
-                        const option = document.querySelector(`[data-type="${type}"][data-value="${value}"]`);
-                        if (option) {
-                            option.classList.add('correct');
-                        }
-                    }
-                });
-            } else {
-                // If incorrect, highlight the correct answers and mark incorrect selections
-                // Highlight envido
-                if (correctCode.envido) {
-                    const envidoOption = document.querySelector(`[data-type="envido"][data-value="${correctCode.envido}"]`);
-                    if (envidoOption) envidoOption.classList.add('correct');
-                }
 
-                // Highlight truco cards - show correct answers in all rows where they appear
-                correctCode.truco.forEach((cardValue) => {
-                    // Highlight all truco options that match this value (across all rows)
-                    const trucoOptions = document.querySelectorAll(`[data-type^="truco"][data-value="${cardValue}"]`);
-                    trucoOptions.forEach(option => {
-                        option.classList.add('correct');
-                    });
-                });
-
-                // Highlight incorrect selections
-                Object.entries(gameState.selectedOptions).forEach(([type, value]) => {
-                    if (value) {
-                        const option = document.querySelector(`[data-type="${type}"][data-value="${value}"]`);
-                        if (option && !option.classList.contains('correct')) {
-                            option.classList.add('incorrect');
-                        }
-                    }
-                });
-            }
-        }
 
         function showSummary() {
             const totalTime = Date.now() - gameState.startTime;
