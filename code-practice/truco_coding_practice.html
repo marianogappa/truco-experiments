@@ -482,7 +482,8 @@
             currentCategorySet: null,
             selectedCategoryIndex: -1, // -1 means random, >= 0 means specific category
             timerPaused: false,
-            roundElapsedTime: 0, // <-- add this
+            roundElapsedTime: 0,
+            pauseTime: null, // Stores when the timer was paused
             selectedOptions: {
                 'envido': null,
                 'truco1': null,
@@ -724,14 +725,18 @@
         function pauseTimer() {
             if (!gameState.timerPaused) {
                 gameState.timerPaused = true;
-                // roundElapsedTime is already up to date from startTimer
+                gameState.pauseTime = Date.now();
+                // Store the current elapsed time when pausing
+                gameState.roundElapsedTime = Date.now() - gameState.roundStartTime;
             }
         }
 
         function resumeTimer() {
             if (gameState.timerPaused) {
+                const pauseDuration = Date.now() - gameState.pauseTime;
+                // Adjust the round start time by adding the pause duration
+                gameState.roundStartTime += pauseDuration;
                 gameState.timerPaused = false;
-                // Adjust roundStartTime so timer resumes correctly (not needed in this flow)
             }
         }
 
@@ -782,6 +787,19 @@
                     this.classList.add('selected');
                     gameState.selectedOptions[type] = value;
                 });
+            });
+
+            // Add window focus/blur event listeners for timer control
+            window.addEventListener('blur', function() {
+                if (gameState.currentRound > 0 && gameState.currentRound <= gameState.totalRounds) {
+                    pauseTimer();
+                }
+            });
+
+            window.addEventListener('focus', function() {
+                if (gameState.currentRound > 0 && gameState.currentRound <= gameState.totalRounds && gameState.timerPaused) {
+                    resumeTimer();
+                }
             });
         });
 
@@ -949,11 +967,13 @@
                     if (envidoOption) envidoOption.classList.add('correct');
                 }
 
-                // Highlight truco cards
+                // Highlight truco cards - show correct answers in all rows where they appear
                 correctCode.truco.forEach((cardValue) => {
-                    // Find any truco option that matches (any position)
+                    // Highlight all truco options that match this value (across all rows)
                     const trucoOptions = document.querySelectorAll(`[data-type^="truco"][data-value="${cardValue}"]`);
-                    if (trucoOptions.length > 0) trucoOptions[0].classList.add('correct');
+                    trucoOptions.forEach(option => {
+                        option.classList.add('correct');
+                    });
                 });
 
                 // Highlight incorrect selections
