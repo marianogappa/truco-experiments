@@ -796,9 +796,16 @@
 
             let maxScore = 0;
             Object.values(suits).forEach(suitCards => {
-                if (suitCards.length >= 2) {
-                    const score = suitCards.reduce((a, b) => a + b, 0) + 20;
-                    maxScore = Math.max(maxScore, score);
+                switch (suitCards.length) {
+                    case 1:
+                        maxScore = Math.max(maxScore, suitCards[0]);
+                        break;
+                    case 2:
+                        maxScore = Math.max(maxScore, suitCards.reduce((a, b) => a + b, 0) + 20);
+                        break;
+                    case 3:
+                        maxScore = Math.max(maxScore, suitCards[0] + suitCards[1] + 20, suitCards[0] + suitCards[2] + 20, suitCards[1] + suitCards[2] + 20);
+                        break;
                 }
             });
 
