@@ -450,7 +450,25 @@
             startNewRound();
         }
 
+        function shuffleOptionGroups() {
+            document.querySelectorAll('.option-group').forEach(group => {
+                const options = Array.from(group.children);
+                // Fisher-Yates shuffle
+                for (let i = options.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [options[i], options[j]] = [options[j], options[i]];
+                }
+                // Remove all children and re-append in shuffled order
+                options.forEach(option => group.appendChild(option));
+            });
+        }
+
         function startNewRound() {
+            // Eliminar mensaje de feedback si existe
+            const existingFeedback = document.querySelector('.feedback');
+            if (existingFeedback) {
+                existingFeedback.remove();
+            }
             gameState.currentRound++;
             gameState.roundStartTime = Date.now();
             gameState.roundElapsedTime = 0;
@@ -468,6 +486,9 @@
 
             // Update labels with random set
             updateLabels();
+
+            // Shuffle the options in each group
+            shuffleOptionGroups();
 
             // Update display
             displayHand();
