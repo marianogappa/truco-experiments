@@ -3,16 +3,23 @@ const STORAGE_KEY = 'truco_coding_practice_stats_v1';
 
 class StatsManager {
     constructor() {
+        console.log('StatsManager constructor called');
         this.initializeUI();
     }
 
     initializeUI() {
+        console.log('Initializing stats UI...');
+        
         // Create and append stats button
         const statsButton = document.createElement('button');
         statsButton.className = 'stats-button';
-        statsButton.innerHTML = '📊 Stats';
+        statsButton.innerHTML = '📊';
+        statsButton.title = 'View Statistics';
         statsButton.onclick = () => this.toggleStats();
+        
+        console.log('Stats button created:', statsButton);
         document.body.appendChild(statsButton);
+        console.log('Stats button appended to body');
 
         // Create and append stats panel
         const statsPanel = document.createElement('div');
@@ -23,6 +30,7 @@ class StatsManager {
             <div id="categoryStatsList"></div>
         `;
         document.body.appendChild(statsPanel);
+        console.log('Stats panel appended to body');
     }
 
     loadStats() {

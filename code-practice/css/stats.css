@@ -1,21 +1,32 @@
 /* Stats Button and Panel Styles */
 .stats-button {
     position: fixed;
-    top: 20px;
-    right: 20px;
+    top: 10px;
+    right: 10px;
     background: linear-gradient(45deg, #667eea, #764ba2);
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 25px;
+    padding: 8px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
     cursor: pointer;
-    z-index: 1000;
-    font-size: 1em;
-    transition: transform 0.2s;
+    z-index: 99999;
+    font-size: 1.4em;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    opacity: 1;
+    pointer-events: auto !important;
 }
 
 .stats-button:hover {
     transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    background: linear-gradient(45deg, #764ba2, #667eea);
 }
 
 .stats-panel {
