@@ -307,6 +307,77 @@ class StatsManager {
 
         table.appendChild(tbody);
         container.appendChild(table);
+
+        // Add summary information
+        const summary = document.createElement('div');
+        summary.className = 'stats-summary';
+        
+        // Calculate total games and find most recent game
+        let totalGames = 0;
+        let lastGameInfo = null;
+        let lastGameDate = null;
+        
+        Object.entries(stats.categories).forEach(([categoryName, categoryStats]) => {
+            totalGames += categoryStats.gamesPlayed;
+            
+            // Find the most recent game
+            if (categoryStats.gameResults && categoryStats.gameResults.length > 0) {
+                const mostRecentGame = categoryStats.gameResults[categoryStats.gameResults.length - 1];
+                const gameDate = new Date(mostRecentGame.date);
+                
+                if (!lastGameDate || gameDate > lastGameDate) {
+                    lastGameDate = gameDate;
+                    lastGameInfo = {
+                        category: categoryName,
+                        date: gameDate,
+                        accuracy: mostRecentGame.accuracy.toFixed(1)
+                    };
+                }
+            }
+        });
+
+        // Format last game information
+        let lastGameText = 'No games played yet';
+        if (lastGameInfo) {
+            const timeAgo = this.getTimeAgo(lastGameInfo.date);
+            lastGameText = `${lastGameInfo.category} (${lastGameInfo.accuracy}%) • ${timeAgo}`;
+        }
+
+        summary.innerHTML = `
+            <div class="summary-item">
+                <span class="summary-label">Total Games:</span>
+                <span class="summary-value">${totalGames}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Last Game:</span>
+                <span class="summary-value">${lastGameText}</span>
+            </div>
+        `;
+        
+        container.appendChild(summary);
+    }
+
+    // Helper function to format time ago
+    getTimeAgo(date) {
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMinutes = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+        if (diffMinutes < 1) {
+            return 'Just now';
+        } else if (diffMinutes < 60) {
+            return `${diffMinutes}m ago`;
+        } else if (diffHours < 24) {
+            return `${diffHours}h ago`;
+        } else if (diffDays === 1) {
+            return 'Yesterday';
+        } else if (diffDays < 7) {
+            return `${diffDays}d ago`;
+        } else {
+            return date.toLocaleDateString();
+        }
     }
 }
 

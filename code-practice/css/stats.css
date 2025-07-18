@@ -203,12 +203,40 @@
 /* Stats summary */
 .stats-summary {
     display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-top: 2px solid #667eea;
+}
+
+.summary-item {
+    display: flex;
     justify-content: space-between;
+    align-items: center;
+    font-size: 0.85em;
+}
+
+.summary-label {
     color: #666;
-    font-size: 0.8em;
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid #dee2e6;
+    font-weight: 500;
+}
+
+.summary-value {
+    color: #333;
+    font-weight: 600;
+    font-family: monospace;
+}
+
+.summary-item:first-child .summary-value {
+    color: #667eea;
+}
+
+.summary-item:last-child .summary-value {
+    color: #555;
+    font-size: 0.9em;
 }
 
 @keyframes slideIn {
@@ -250,5 +278,14 @@
     .stats-panel .stats-grid td.stat-value.trend-na {
         min-height: 22px;
         font-size: 1.0em;
+    }
+
+    .stats-summary {
+        padding: 8px 10px;
+        gap: 6px;
+    }
+
+    .summary-item {
+        font-size: 0.8em;
     }
 } 
