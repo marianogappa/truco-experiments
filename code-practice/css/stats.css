@@ -32,14 +32,14 @@
 .stats-panel {
     display: none;
     position: fixed;
-    top: 80px;
-    right: 20px;
+    top: 60px;
+    right: 10px;
     background: white;
-    padding: 20px;
-    border-radius: 15px;
+    padding: 12px;
+    border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    max-height: 80vh;
+    width: 480px;
+    max-height: 85vh;
     overflow-y: auto;
     z-index: 999;
 }
@@ -48,28 +48,97 @@
     display: block;
 }
 
-.category-stats {
-    margin: 15px 0;
-    padding: 15px;
+.stats-grid {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 0.8em;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.stats-grid th {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    padding: 8px 6px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.75em;
+    white-space: nowrap;
+}
+
+.stats-grid td {
+    padding: 6px 4px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #666;
+    font-size: 0.75em;
+}
+
+.stats-grid tr:nth-child(even) {
     background: #f8f9fa;
-    border-radius: 10px;
-    border-left: 4px solid #667eea;
 }
 
-.category-stats h3 {
-    margin-bottom: 10px;
+.stats-grid tr:hover {
+    background: #e8f4fd;
+}
+
+.stats-grid .category-name {
+    font-weight: 600;
     color: #333;
+    min-width: 80px;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-.stat-row {
+.stats-grid .stat-value {
+    font-weight: 500;
+    color: #333;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.stats-summary {
     display: flex;
     justify-content: space-between;
-    margin: 5px 0;
-    font-size: 0.9em;
-    color: #666;
+    align-items: center;
+    margin: 8px 0;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.75em;
 }
 
-.stat-row .stat-value {
-    font-weight: bold;
+.stats-summary .total-games {
+    font-weight: 600;
     color: #333;
+}
+
+.stats-summary .last-updated {
+    color: #666;
+    font-size: 0.7em;
+}
+
+.stats-panel h2 {
+    margin: 0 0 10px 0;
+    font-size: 1.1em;
+    color: #333;
+    text-align: center;
+}
+
+.trend-up {
+    color: #28a745 !important;
+    font-weight: bold;
+}
+
+.trend-down {
+    color: #dc3545 !important;
+    font-weight: bold;
+}
+
+.trend-stable {
+    color: #6c757d !important;
 } 

@@ -462,7 +462,7 @@
         ];
 
         const CATEGORY_NAMES = [
-            'Subte Lines',
+            'CABA Neighborhoods',
             'Argentine Rock',
             'Yerba Mate & Drinks',
             'Colors',
@@ -524,7 +524,6 @@
             { suit: 'bastos', value: '10', name: '10 de Basto', trucoRank: 9, envidoValue: 0 },
             { suit: 'oros', value: '10', name: '10 de Oro', trucoRank: 9, envidoValue: 0 },
             { suit: 'copas', value: '10', name: '10 de Copas', trucoRank: 9, envidoValue: 0 },
-            { suit: 'espadas', value: '07', name: '7 de Espada', trucoRank: 10, envidoValue: 7 },
             { suit: 'bastos', value: '07', name: '7 de Basto', trucoRank: 10, envidoValue: 7 },
             { suit: 'copas', value: '07', name: '7 de Copas', trucoRank: 10, envidoValue: 7 },
             { suit: 'espadas', value: '06', name: '6 de Espada', trucoRank: 11, envidoValue: 6 },
@@ -760,7 +759,7 @@
             // Habilita o deshabilita las opciones y el botón Done
             document.querySelectorAll('.coding-option').forEach(option => {
                 option.style.pointerEvents = enabled ? '' : 'none';
-                option.style.opacity = enabled ? '' : '0.5';
+                option.style.opacity = enabled ? '' : '0.2';
             });
             const doneBtn = document.getElementById('doneBtn');
             if (doneBtn) {
@@ -888,8 +887,15 @@
             let isCorrect = true;
             let feedback = '';
 
-            // Check envido
-            if (gameState.selectedOptions['envido'] !== correctCode.envido) {
+            // Check envido - accept both undefined and '8' as valid for null cases
+            if (correctCode.envido === '8') {
+                // If correct answer is null, accept both undefined and '8'
+                if (gameState.selectedOptions['envido'] !== undefined && 
+                    gameState.selectedOptions['envido'] !== '8') {
+                    isCorrect = false;
+                    feedback += `Envido incorrect (was ${gameState.selectedOptions['envido']}, should be Null) `;
+                }
+            } else if (gameState.selectedOptions['envido'] !== correctCode.envido) {
                 isCorrect = false;
                 feedback += `Envido incorrect (was ${gameState.selectedOptions['envido']}, should be ${correctCode.envido}) `;
             }
@@ -903,10 +909,27 @@
                 }
             }
 
-            // Check if selected cards match (order matters)
-            if (JSON.stringify(correctCode.truco) !== JSON.stringify(selectedTrucoCards)) {
-                isCorrect = false;
-                feedback += 'Truco cards incorrect. ';
+            // Special case: if correctCode.truco is ['8'], accept empty selection or single '8'
+            if (correctCode.truco.length === 1 && correctCode.truco[0] === '8') {
+                // Accept if user selected nothing or only selected '8' once
+                const nullSelections = Object.entries(gameState.selectedOptions)
+                    .filter(([key, value]) => key.startsWith('truco') && value === '8')
+                    .length;
+                
+                const nonNullSelections = Object.entries(gameState.selectedOptions)
+                    .filter(([key, value]) => key.startsWith('truco') && value !== null && value !== undefined && value !== '8')
+                    .length;
+
+                if (nonNullSelections > 0 || (nullSelections > 1)) {
+                    isCorrect = false;
+                    feedback += 'Truco cards incorrect (should be Null or no selection) ';
+                }
+            } else {
+                // Normal case - check if selected cards match (order matters)
+                if (JSON.stringify(correctCode.truco) !== JSON.stringify(selectedTrucoCards)) {
+                    isCorrect = false;
+                    feedback += 'Truco cards incorrect ';
+                }
             }
 
             // Show feedback
