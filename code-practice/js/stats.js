@@ -26,7 +26,7 @@ class StatsManager {
         statsPanel.className = 'stats-panel';
         statsPanel.id = 'statsPanel';
         statsPanel.innerHTML = `
-            <h2>Category Statistics</h2>
+            <h2>Nerd Metrics</h2>
             <div id="categoryStatsList"></div>
         `;
         document.body.appendChild(statsPanel);
@@ -95,7 +95,7 @@ class StatsManager {
                 gameResults: [],
                 currentStreak: 0,
                 bestStreak: 0,
-                recentGames: [], // Last 10 games for trend analysis
+                recentGames: [], // Last 5 games for trend analysis
                 consistency: 0,
                 recentTrend: 0
             };
@@ -180,6 +180,49 @@ class StatsManager {
         }
     }
 
+    sortStats(table, sortBy) {
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const th = table.querySelector(`th[data-sort="${sortBy}"]`);
+        
+        // Toggle sort direction
+        const isAsc = th.classList.toggle('asc');
+        th.classList.toggle('desc', !isAsc);
+        
+        // Reset other headers
+        table.querySelectorAll('th').forEach(header => {
+            if (header !== th) {
+                header.classList.remove('asc', 'desc');
+            }
+        });
+
+        // Sort rows
+        rows.sort((a, b) => {
+            // Find the cells in the correct column using the sortBy value
+            const aCell = a.querySelector(`td:nth-child(${Array.from(th.parentNode.children).indexOf(th) + 1})`);
+            const bCell = b.querySelector(`td:nth-child(${Array.from(th.parentNode.children).indexOf(th) + 1})`);
+            
+            // Get raw values for sorting
+            const aVal = aCell.dataset.raw;
+            const bVal = bCell.dataset.raw;
+
+            // Handle numeric values
+            if (!isNaN(aVal) && !isNaN(bVal)) {
+                const aNum = parseFloat(aVal);
+                const bNum = parseFloat(bVal);
+                return isAsc ? aNum - bNum : bNum - aNum;
+            }
+            
+            // Handle text values
+            return isAsc ? 
+                String(aVal).localeCompare(String(bVal)) : 
+                String(bVal).localeCompare(String(aVal));
+        });
+
+        // Reorder rows
+        rows.forEach(row => tbody.appendChild(row));
+    }
+
     displayStats() {
         const stats = this.loadStats();
         const container = document.getElementById('categoryStatsList');
@@ -194,19 +237,27 @@ class StatsManager {
         const table = document.createElement('table');
         table.className = 'stats-grid';
         
-        // Create header
+        // Create header with sort functionality
         const thead = document.createElement('thead');
         thead.innerHTML = `
             <tr>
-                <th>Category</th>
-                <th>Games</th>
-                <th>Accuracy</th>
-                <th>Avg Time</th>
-                <th>Consistency</th>
-                <th>Trend</th>
+                <th data-sort="category" class="sortable">Category</th>
+                <th data-sort="games" class="sortable">Games</th>
+                <th data-sort="accuracy" class="sortable">Accuracy</th>
+                <th data-sort="time" class="sortable">Avg Time</th>
+                <th data-sort="consistency" class="sortable">Consistency</th>
+                <th data-sort="trend" class="sortable">Trend</th>
             </tr>
         `;
         table.appendChild(thead);
+
+        // Add click handlers for sorting
+        thead.querySelectorAll('th').forEach(th => {
+            th.addEventListener('click', () => {
+                const sortBy = th.dataset.sort;
+                this.sortStats(table, sortBy);
+            });
+        });
 
         // Create body with category rows
         const tbody = document.createElement('tbody');
@@ -220,14 +271,16 @@ class StatsManager {
             
             // Format consistency score (lower is better)
             const consistencyScore = categoryStats.consistency 
-                ? (categoryStats.consistency * 100).toFixed(0) + '%'
+                ? (categoryStats.consistency * 100).toFixed(0)
                 : '-';
             
             // Format trend (positive is improving)
-            let trendDisplay = '-';
-            let trendClass = '';
+            let trendDisplay = 'N/A';
+            let trendClass = 'trend-na';
+            let trendValue = -999; // Use a very low number to sort N/A values last
             if (categoryStats.recentTrend !== undefined && categoryStats.recentGames && categoryStats.recentGames.length >= window.settings.trendThreshold) {
                 const trend = categoryStats.recentTrend;
+                trendValue = trend;
                 if (Math.abs(trend) < 1) {
                     trendDisplay = '→';
                     trendClass = 'trend-stable';
@@ -242,26 +295,18 @@ class StatsManager {
             
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td class="category-name">${category}</td>
-                <td class="stat-value">${categoryStats.gamesPlayed}</td>
-                <td class="stat-value">${accuracy}%</td>
-                <td class="stat-value">${avgRoundTime}s</td>
-                <td class="stat-value">${consistencyScore}</td>
-                <td class="stat-value ${trendClass}">${trendDisplay}</td>
+                <td class="category-name" data-raw="${category}">${category}</td>
+                <td class="stat-value" data-raw="${categoryStats.gamesPlayed}">${categoryStats.gamesPlayed}</td>
+                <td class="stat-value" data-raw="${accuracy}">${accuracy}%</td>
+                <td class="stat-value" data-raw="${avgRoundTime}">${avgRoundTime}s</td>
+                <td class="stat-value" data-raw="${consistencyScore === '-' ? -1 : consistencyScore}">${consistencyScore}%</td>
+                <td class="stat-value ${trendClass}" data-raw="${trendValue}">${trendDisplay}</td>
             `;
             tbody.appendChild(row);
         });
+
         table.appendChild(tbody);
         container.appendChild(table);
-
-        // Add summary information
-        const summary = document.createElement('div');
-        summary.className = 'stats-summary';
-        summary.innerHTML = `
-            <div class="total-games">Total Games: ${stats.totalGames}</div>
-            <div class="last-updated">${stats.lastUpdated ? `Updated: ${new Date(stats.lastUpdated).toLocaleString()}` : ''}</div>
-        `;
-        container.appendChild(summary);
     }
 }
 
