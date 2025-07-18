@@ -131,14 +131,21 @@
 
 .trend-up {
     color: #28a745 !important;
-    font-weight: bold;
+    font-weight: bold !important;
+    font-size: 1.5em !important;
+    border-top: 0px !important;
+    border-bottom: 0px !important;
 }
 
 .trend-down {
     color: #dc3545 !important;
-    font-weight: bold;
+    font-weight: bold !important;
+    font-size: 1.3em !important;
+    border-top: 0px !important;
+    border-bottom: 0px !important;
 }
 
 .trend-stable {
     color: #6c757d !important;
+    font-size: 1.4em !important;
 } 

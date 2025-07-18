@@ -13,6 +13,93 @@
             box-sizing: border-box;
         }
 
+        /* Settings styles */
+        .settings-button {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #667eea;
+            color: #667eea;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2em;
+            z-index: 9999;
+            transition: all 0.2s;
+        }
+
+        .settings-button:hover {
+            background: #667eea;
+            color: white;
+            transform: rotate(30deg);
+        }
+
+        .settings-panel {
+            position: fixed;
+            top: 60px;
+            left: 10px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 9998;
+            width: 250px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .settings-panel.visible {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .settings-panel h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .settings-group {
+            margin-bottom: 15px;
+        }
+
+        .settings-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .settings-group input[type="range"] {
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        .settings-group .value-display {
+            text-align: right;
+            color: #667eea;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -309,7 +396,7 @@
         }
 
         .countdown-bar.animate {
-            animation: countdown 1000ms linear forwards;
+            animation: countdown var(--countdown-duration, 1000ms) linear forwards;
         }
 
         @keyframes countdown {
@@ -407,6 +494,15 @@
 </head>
 
 <body>
+    <button class="settings-button" onclick="toggleSettings()">⚙️</button>
+    <div class="settings-panel" id="settingsPanel">
+        <h3>⚙️ Settings</h3>
+        <div class="settings-group">
+            <label for="countdownDuration">Countdown Duration</label>
+            <input type="range" id="countdownDuration" min="500" max="5000" step="100" value="1000">
+            <div class="value-display"><span id="durationDisplay">1.0</span>s</div>
+        </div>
+    </div>
     <div class="container">
         <div class="start-screen">
             <h1 class="title">Truco Coding Practice</h1>
@@ -506,6 +602,65 @@
     </div>
 
     <script>
+        // Settings management
+        let settings = {
+            countdownDuration: 1000,
+            trendThreshold: 5 // Changed from 10 to 5 games
+        };
+
+        // Load settings from localStorage
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('truco_practice_settings');
+            if (savedSettings) {
+                settings = { ...settings, ...JSON.parse(savedSettings) };
+                // Update UI to reflect loaded settings
+                document.getElementById('countdownDuration').value = settings.countdownDuration;
+                updateDurationDisplay();
+                // Set initial CSS variable for animation duration
+                document.documentElement.style.setProperty('--countdown-duration', `${settings.countdownDuration}ms`);
+            }
+        }
+
+        // Save settings to localStorage
+        function saveSettings() {
+            localStorage.setItem('truco_practice_settings', JSON.stringify(settings));
+        }
+
+        // Toggle settings panel
+        function toggleSettings() {
+            const panel = document.getElementById('settingsPanel');
+            panel.classList.toggle('visible');
+        }
+
+        // Update duration display
+        function updateDurationDisplay() {
+            document.getElementById('durationDisplay').textContent = (settings.countdownDuration / 1000).toFixed(1);
+        }
+
+        // Initialize settings controls
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
+            
+            // Setup countdown duration slider
+            const durationSlider = document.getElementById('countdownDuration');
+            durationSlider.addEventListener('input', (e) => {
+                settings.countdownDuration = parseInt(e.target.value);
+                updateDurationDisplay();
+                saveSettings();
+                // Update CSS variable for animation duration
+                document.documentElement.style.setProperty('--countdown-duration', `${settings.countdownDuration}ms`);
+            });
+
+            // Close settings panel when clicking outside
+            document.addEventListener('click', (e) => {
+                const panel = document.getElementById('settingsPanel');
+                const button = document.querySelector('.settings-button');
+                if (!panel.contains(e.target) && !button.contains(e.target) && panel.classList.contains('visible')) {
+                    panel.classList.remove('visible');
+                }
+            });
+        });
+
         // Game configuration
         const CATEGORY_SETS = [
             ['San Martín', 'Belgrano', 'Sarmiento', 'Roca', 'Centenario', 'Recoleta', 'Soldati', 'Lugano', 'Palermo'],
@@ -1067,7 +1222,7 @@
 
             // Setup countdown system
             let isPaused = false;
-            let remainingTime = 1000; // 1 seconds
+            let remainingTime = settings.countdownDuration;
             let startTime = Date.now();
             let animationFrame;
 
