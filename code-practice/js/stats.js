@@ -157,8 +157,8 @@ class StatsManager {
             categoryStats.consistency = mean > 0 ? (stdDev / mean) : 0; // Lower is better (more consistent)
         }
 
-        // Calculate recent trend (last 10 games accuracy vs overall)
-        if (categoryStats.recentGames.length >= 5) {
+        // Calculate recent trend when we have enough games
+        if (categoryStats.recentGames.length >= window.settings.trendThreshold) {
             const recentAccuracy = categoryStats.recentGames.reduce((acc, game) => acc + game.accuracy, 0) / categoryStats.recentGames.length;
             const overallAccuracy = (categoryStats.totalCorrect / (categoryStats.gamesPlayed * 10)) * 100;
             categoryStats.recentTrend = recentAccuracy - overallAccuracy; // Positive means improving
@@ -226,7 +226,7 @@ class StatsManager {
             // Format trend (positive is improving)
             let trendDisplay = '-';
             let trendClass = '';
-            if (categoryStats.recentTrend !== undefined && categoryStats.recentGames && categoryStats.recentGames.length >= 5) {
+            if (categoryStats.recentTrend !== undefined && categoryStats.recentGames && categoryStats.recentGames.length >= window.settings.trendThreshold) {
                 const trend = categoryStats.recentTrend;
                 if (Math.abs(trend) < 1) {
                     trendDisplay = '→';
